@@ -15,11 +15,13 @@ pipeline {
             }
         }
         stage("Script usage") {
-            script {
-                def values = ["uat", "dev", "prod"]
-                sh "chmod +x hello-world.sh"
-                for (name in values) {
-                    sh "sh hello-world.sh ${name}"
+            steps {
+                script {
+                    def values = ["uat", "dev", "prod"]
+                    sh "chmod +x hello-world.sh"
+                    for (name in values) {
+                        sh "sh hello-world.sh ${name}"
+                    }
                 }
             }
         }
