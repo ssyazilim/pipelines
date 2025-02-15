@@ -1,5 +1,6 @@
 Jenkinsfile, Jenkins'te pipeline'ları tanımlamak için kullanılan bir dosyadır. Bu dosya, genellikle Groovy tabanlı bir sözdizimi kullanır ve projenizin build, test ve deploy gibi adımlarını otomatikleştirir.
 
+``` groovy
 pipeline {
     agent any
     stages {
