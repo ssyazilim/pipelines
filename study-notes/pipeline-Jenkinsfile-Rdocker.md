@@ -8,7 +8,9 @@ pipeline {
         maven "Maven"
     }
     environment {
-        dockerhub_cred = credentials("DOCKERHUB_AUTH")
+        DOCKER_AUTH = credentials("DOCKERHUB_AUTH")
+        DOCKER_IMAGE = "davidmashadow:addressbook"
+        DOCKER_TAG = "$BUILD_NUMBER"
     }
     stages {
         stage("Checkout") {
@@ -23,18 +25,20 @@ pipeline {
         }
         stage("Docker build") {
             steps {
-                sh "docker build -t davidmashadow/addressbook:1.0 ."
+                sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
             }
         }
-        stage("Dockerhub push") {
+        stage("DockerHub push") {
             steps {
-                sh "echo $dockerhub_cred_PSW | docker login -u $dockerhub_cred_USR --password-stdin"
-                sh "docker push davidmashadow/addressbook:1.0"
+                sh "echo $DOCKER_AUTH_PSW | docker login -u $DOCKER_AUTH_USR --password-stdin"
+                sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                sh "docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_IMAGE}:latest"
+                sh "docker push ${DOCKER_IMAGE}:latest"
             }
         }
         stage("Docker run") {
             steps {
-                sh "docker run -d -p 80:8080 --name add davidmashadow/addressbook:1.0"
+                sh "docker run -d -p 80:8080 --name addressbook ${DOCKER_IMAGE}:latest"
             }
         }
     }
